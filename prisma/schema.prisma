@@ -13,22 +13,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  userId Int @id @default(autoincrement())
-  firstName String
-  lastName String
-  phoneNumber String
-  email   String
-  address   String? @db.VarChar(255)
-  dateOfBirth String? 
-  gender   String? @db.VarChar(55)
-  education String?
-  faculty String?
-  department String?
+  userId              Int     @id @default(autoincrement())
+  firstName           String
+  lastName            String
+  phoneNumber         String
+  email               String
+  address             String? @db.VarChar(255)
+  dateOfBirth         String?
+  gender              String? @db.VarChar(55)
+  education           String?
+  faculty             String?
+  department          String?
   dateCanStartWorking String?
-  interestedPosition String?
-  createdAt String?
+  interestedPosition  String?
+  createdAt           String?
 }
 
+model Differ {
+  differId    Int     @id @default(autoincrement())
+  userId      Int
+  totalTime   String?
+  score       String?
+  totalClick  Int?
+  totalSkip   Int?
+  skipCounts  Json?
+  timeCounts  Json?
+  clickCounts Json?
+  scoreCounts Json?
+  createdAt  String?
+}
 
+model Test {
+  testId Int     @id @default(autoincrement())
+  userId Int
+  testTime String?
+  testScore String? 
+  test1  Int?
+  test2  Int?
+  test3  Int?
+  test4  Int?
+  test5  Int?
+  test6  Int?
+  test7  Int?
+  test8  Int?
+  createdAt  String?
+}
