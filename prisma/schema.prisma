@@ -15,10 +15,12 @@ datasource db {
 
 model User {
   userId              Int     @id @default(autoincrement())
-  firstName           String
-  lastName            String
-  phoneNumber         String
-  email               String
+  profileImage        String? @db.VarChar(55)
+  firstName           String?
+  lastName            String?
+  phoneNumber         String?
+  email               String?
+  university          String? @db.VarChar(255)
   address             String? @db.VarChar(255)
   dateOfBirth         String?
   gender              String? @db.VarChar(55)
@@ -42,20 +44,57 @@ model Differ {
   clickCounts Json?
   scoreCounts Json?
   createdAt  String?
+
+   testTime String?
+ testTotalScore String? 
+    testAllResult Json?
 }
 
-model Test {
-  testId Int     @id @default(autoincrement())
-  userId Int
-  testTime String?
-  testScore String? 
-  test1  Int?
-  test2  Int?
-  test3  Int?
-  test4  Int?
-  test5  Int?
-  test6  Int?
-  test7  Int?
-  test8  Int?
-  createdAt  String?
+// model Test {
+//   testId Int     @id @default(autoincrement())
+//   userId Int
+//   testTime String?
+//   testTotalScore String? 
+//   testAllResult Json?
+//   createdAt  String?
+// }
+
+
+model Province {
+  province_id      Int     @id @default(autoincrement())
+  province_name_th String?
+  province_name_en String?
+  province_code    String?
+}
+
+model District {
+  district_id      Int     @id @default(autoincrement())
+  province_code    String?
+  district_code    String?
+  district_name_th String?
+  district_name_en String?
+  postal_code      String?
+}
+
+model SubDistrict {
+  sub_district_id      Int     @id @default(autoincrement())
+  province_code        String?
+  district_code        String?
+  sub_district_code    String?
+  sub_district_name_th String?
+  sub_district_name_en String?
+  postal_code          String?
+}
+
+model University {
+  university_id  Int     @id @default(autoincrement())
+  university  String? @db.VarChar(255)
+  thCode String?
+  enCode String?
+}
+
+model Education {
+  education_id Int     @id @default(autoincrement())
+  education_th  String? @db.VarChar(255)
+  education_en  String? @db.VarChar(255)
 }

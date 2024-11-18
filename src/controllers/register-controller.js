@@ -2,33 +2,57 @@ const prisma = require("../models/prisma");
 
 exports.register = async (req, res, next) => {
   try {
+    console.log("dd", req.body)
     const timeStamp = Date.now();
-    const { email, phoneNumber } = req.body;
-    req.body.createdAt = "" + timeStamp;
-    console.log(req.body);
-    const isMatchEmail = await prisma.user.findFirst({
-      where: {
-        email,
-      },
-    });
-    if (isMatchEmail) {
-      return res.status(200).json({ message: "registation success" });
-    }
 
-    const isMatchPhoneNumber = await prisma.user.findFirst({
-      where: {
+    const { targetUserId, firstName, lastName, address ,dateOfBirth ,gender ,phoneNumber ,email ,university ,education ,faculty ,department ,interestedPosition} = req.body
+    await prisma.user.update({
+      where:{
+        userId : +targetUserId
+      },data:{
+        firstName,
+        lastName,
+        address,
+        dateOfBirth,
+        gender,
         phoneNumber,
-      },
-    });
-    if (isMatchPhoneNumber) {
-      return res.status(200).json({ message: "registation success" });
-    }
+        email,
+        university,
+        education,
+        faculty,
+        department,
+        interestedPosition,
+        createdAt: '' + timeStamp
+      }
+    })
 
-    const response = await prisma.user.create({
-      data: req.body,
-    });
+    res.status(200).json({ message: "created" })
+    // const { email, phoneNumber } = req.body;
+    // req.body.createdAt = "" + timeStamp;
+    // console.log(req.body);
+    // const isMatchEmail = await prisma.user.findFirst({
+    //   where: {
+    //     email,
+    //   },
+    // });
+    // if (isMatchEmail) {
+    //   return res.status(200).json({ message: "registation success" });
+    // }
 
-    res.status(201).json({ message: "created" });
+    // const isMatchPhoneNumber = await prisma.user.findFirst({
+    //   where: {
+    //     phoneNumber,
+    //   },
+    // });
+    // if (isMatchPhoneNumber) {
+    //   return res.status(200).json({ message: "registation success" });
+    // }
+
+    // const response = await prisma.user.create({
+    //   data: req.body,
+    // });
+
+    // res.status(201).json({ message: "created" });
   } catch (error) {
     console.log(error);
   }
@@ -47,14 +71,7 @@ exports.createTestRecord = async (req, res, next) => {
       totalTime,
       testScore,
       testTime,
-      test1,
-      test2,
-      test3,
-      test4,
-      test5,
-      test6,
-      test7,
-      test8,
+
     } = req.body;
     req.body.createdAt = "" + timeStamp;
     const isMatchEmail = await prisma.user.findFirst({
@@ -85,6 +102,11 @@ exports.createTestRecord = async (req, res, next) => {
         skipCounts.push(skipCount);
       }
 
+      const allTestResult = []
+      for (let i = 1; i <= 8; i++){
+        const test = req.body[`test${i}`]
+        allTestResult.push(test)
+      }
       await prisma.differ.create({
         data: {
           userId: +isMatchEmail.userId,
@@ -97,26 +119,25 @@ exports.createTestRecord = async (req, res, next) => {
           totalClick: +totalClick,
           totalSkip: +totalSkip,
           totalTime: "" + totalTime,
+
+          testAllResult: JSON.stringify(allTestResult),
+          testTotalScore: "" + testScore,
+          testTime: "" + testTime,
         },
       });
 
-    const testRes =   await prisma.test.create({
-        data: {
-          userId: +isMatchEmail.userId,
-          testScore: "" + testScore,
-          testTime: "" + testTime,
-          test1,
-          test2,
-          test3,
-          test4,
-          test5,
-          test6,
-          test7,
-          test8,
-          createdAt: "" + timeStamp,
-        },
-      });
-      console.log("testRes",testRes)
+ 
+
+    // const testRes =   await prisma.test.create({
+    //     data: {
+    //       userId: +isMatchEmail.userId,
+    //       testTotalScore: "" + testScore,
+    //       testTime: "" + testTime,
+    //       testAllResult: JSON.stringify(allTestResult),
+    //       createdAt: "" + timeStamp,
+    //     },
+    //   });
+    //   console.log("testRes",testRes)
       return res.status(200).json({ message: "created success" });
     }
 
@@ -132,3 +153,88 @@ exports.createTestRecord = async (req, res, next) => {
     console.log(error);
   }
 };
+
+
+exports.searchProvince = async (req,res,next) =>{
+  try {
+    const { q } = req.query;
+
+  const response =  await prisma.province.findMany({
+    where:{
+      OR :[
+        { province_name_en : { contains: q , }, },
+        { province_name_th : { contains: q , }, },
+
+      ]
+    }
+  })
+console.log(response)
+  res.status(200).json(response)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+exports.searchDistrict = async (req, res, next) =>{
+  try {
+    const { q } = req.query;
+
+    const response =  await prisma.district.findMany({
+      where:{
+        OR :[
+          { province_code : { contains: q , }, },
+        ]
+      }
+    })
+  console.log(response)
+    res.status(200).json(response)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+exports.searchSubDistrict = async (req,res,next) =>{
+  try {
+    const { q } = req.query;
+
+    const response =  await prisma.subDistrict.findMany({
+      where:{
+        OR :[
+          { district_code : { contains: q , }, }
+        ]
+      }
+    })
+  console.log(response)
+    res.status(200).json(response)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+exports.searchUniversity = async (req,res,next) =>{
+  try {
+    const { q } = req.query;
+
+    const response = await prisma.university.findMany({
+      where:{
+        OR:[
+          { university : { contains : q }}
+        ]
+      }
+    })
+    res.status(200).json(response)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+exports.searchEducation = async (req, res, next) =>{
+  try {
+    const { q } = req.query;
+
+    const response = await prisma.education.findMany()
+    res.status(200).json(response)
+  } catch (error) {
+    console.log(error)
+  }
+}
