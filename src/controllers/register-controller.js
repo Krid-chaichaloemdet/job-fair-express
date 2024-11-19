@@ -27,32 +27,7 @@ exports.register = async (req, res, next) => {
     })
 
     res.status(200).json({ message: "created" })
-    // const { email, phoneNumber } = req.body;
-    // req.body.createdAt = "" + timeStamp;
-    // console.log(req.body);
-    // const isMatchEmail = await prisma.user.findFirst({
-    //   where: {
-    //     email,
-    //   },
-    // });
-    // if (isMatchEmail) {
-    //   return res.status(200).json({ message: "registation success" });
-    // }
 
-    // const isMatchPhoneNumber = await prisma.user.findFirst({
-    //   where: {
-    //     phoneNumber,
-    //   },
-    // });
-    // if (isMatchPhoneNumber) {
-    //   return res.status(200).json({ message: "registation success" });
-    // }
-
-    // const response = await prisma.user.create({
-    //   data: req.body,
-    // });
-
-    // res.status(201).json({ message: "created" });
   } catch (error) {
     console.log(error);
   }
@@ -61,7 +36,6 @@ exports.register = async (req, res, next) => {
 exports.createTestRecord = async (req, res, next) => {
   try {
     const timeStamp = Date.now();
-    // console.log(req.body);
     const {
       email,
       phoneNumber,
@@ -74,12 +48,19 @@ exports.createTestRecord = async (req, res, next) => {
 
     } = req.body;
     req.body.createdAt = "" + timeStamp;
-    const isMatchEmail = await prisma.user.findFirst({
-      where: {
-        email,
-      },
-    });
-    if (isMatchEmail) {
+
+    const isMatchPhoneNumber = await prisma.user.findFirst({
+      where:{
+        phoneNumber: phoneNumber
+      }
+    })
+
+    if(!isMatchPhoneNumber){
+      return res.status(400).json({ message : "invalid credential"})
+    }
+
+
+
       const picTimes = [];
       for (let i = 1; i <= 30; i++) {
         const picTime = req.body[`pic${i}`];
@@ -107,9 +88,9 @@ exports.createTestRecord = async (req, res, next) => {
         const test = req.body[`test${i}`]
         allTestResult.push(test)
       }
-      await prisma.differ.create({
+  const testResponse =   await prisma.differ.create({
         data: {
-          userId: +isMatchEmail.userId,
+          userId: +isMatchPhoneNumber.userId,
           timeCounts: JSON.stringify(picTimes),
           clickCounts: JSON.stringify(clickCounts),
           scoreCounts: JSON.stringify(scoreCounts),
@@ -125,30 +106,8 @@ exports.createTestRecord = async (req, res, next) => {
           testTime: "" + testTime,
         },
       });
+      res.status(200).json({ message : 'test record created'})
 
- 
-
-    // const testRes =   await prisma.test.create({
-    //     data: {
-    //       userId: +isMatchEmail.userId,
-    //       testTotalScore: "" + testScore,
-    //       testTime: "" + testTime,
-    //       testAllResult: JSON.stringify(allTestResult),
-    //       createdAt: "" + timeStamp,
-    //     },
-    //   });
-    //   console.log("testRes",testRes)
-      return res.status(200).json({ message: "created success" });
-    }
-
-    const isMatchPhoneNumber = await prisma.user.findFirst({
-      where: {
-        phoneNumber,
-      },
-    });
-    if (isMatchPhoneNumber) {
-      return res.status(200).json({ message: "registation success" });
-    }
   } catch (error) {
     console.log(error);
   }
@@ -233,6 +192,21 @@ exports.searchEducation = async (req, res, next) =>{
     const { q } = req.query;
 
     const response = await prisma.education.findMany()
+    res.status(200).json(response)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+exports.getMe = async (req, res, next) =>{
+  try {
+   
+  const response =   await prisma.user.findFirst({
+      where:{
+        userId: +req.body.id
+      }
+    })
+    console.log("GET ME !!!", response)
     res.status(200).json(response)
   } catch (error) {
     console.log(error)

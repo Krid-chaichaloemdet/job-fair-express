@@ -8,6 +8,8 @@ const searchDistrictController = require('../controllers/register-controller')
 const searchSubDistrictController = require('../controllers/register-controller')
 const searchUniversityController = require('../controllers/register-controller')
 const searchEducationController = require('../controllers/register-controller')
+const getMeController = require('../controllers/register-controller')
+
 
 router.post('/register' ,userController.register)
 router.post('/createTestRecord',createTestRecordController.createTestRecord)
@@ -16,6 +18,7 @@ router.get('/searchDistrict', searchDistrictController.searchDistrict)
 router.get('/searchSubDistrict', searchSubDistrictController.searchSubDistrict)
 router.get('/searchUniversity', searchUniversityController.searchUniversity)
 router.get('/searchEducation', searchEducationController.searchEducation)
+router.post('/getMe', getMeController.getMe)
 
 
 module.exports = router
