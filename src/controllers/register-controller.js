@@ -29,9 +29,9 @@ exports.register = async (req, res, next) => {
       }
     })
 
-    if(isRegister){
-      return res.status(400).json({ message: 'This phone number is already registered.'})
-    }
+    // if(isRegister){
+    //   return res.status(400).json({ message: 'This phone number is already registered.'})
+    // }
 
     await prisma.user.update({
       where: {
@@ -80,9 +80,9 @@ exports.checkPhoneNumber = async (req, res, next) =>{
         userId : isMatch.userId
       }
     })
-    if(isTestExist){
-      return res.status(400).json({ message : "This phone number has already been used to participate in this quiz."})
-    }
+    // if(isTestExist){
+    //   return res.status(400).json({ message : "This phone number has already been used to participate in this quiz."})
+    // }
     res.status(200).json({ message : "valid phone number"})
   } catch (error) {
     console.log(error)
