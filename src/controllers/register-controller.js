@@ -3,7 +3,7 @@ const prisma = require("../models/prisma");
 exports.register = async (req, res, next) => {
   try {
     const timeStamp = Date.now();
-
+    console.log(req.body)
     const {
       targetUserId,
       firstName,
@@ -18,8 +18,21 @@ exports.register = async (req, res, next) => {
       faculty,
       department,
       interestedPosition,
-      interestingRate
+      interestingRate,
+      likedRate,
+      
     } = req.body;
+
+    const isRegister = await prisma.user.findFirst({
+      where:{
+        phoneNumber
+      }
+    })
+
+    if(isRegister){
+      return res.status(400).json({ message: 'This phone number is already registered.'})
+    }
+
     await prisma.user.update({
       where: {
         userId: +targetUserId,
@@ -38,6 +51,7 @@ exports.register = async (req, res, next) => {
         department,
         interestedPosition,
         interestingRate,
+        likedRate,
         createdAt: "" + timeStamp,
       },
     });
@@ -50,7 +64,6 @@ exports.register = async (req, res, next) => {
 
 exports.checkPhoneNumber = async (req, res, next) =>{
   try {
-    console.log(" check number", req.body)
     const { phoneNumber} = req.body
     const isMatch = await prisma.user.findFirst({
       where:{
@@ -60,8 +73,16 @@ exports.checkPhoneNumber = async (req, res, next) =>{
     if(!isMatch){
       return res.status(400).json({ message : "Invalid phone number. Please enter the phone number you submitted during the registration."})
     }
+    console.log(" isMatch ", isMatch)
 
-
+    const isTestExist = await prisma.differ.findFirst({
+      where:{
+        userId : isMatch.userId
+      }
+    })
+    if(isTestExist){
+      return res.status(400).json({ message : "This phone number has already been used to participate in this quiz."})
+    }
     res.status(200).json({ message : "valid phone number"})
   } catch (error) {
     console.log(error)
