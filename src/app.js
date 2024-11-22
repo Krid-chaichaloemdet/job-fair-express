@@ -12,6 +12,7 @@ app.use(cors())
 app.use(morgan('dev'))
 app.use(express.json())  
 
+app.use('/test', (req,res)=>{ res.status(200).json({message: 'okay'}) })
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, 'uploads/'); // Specify the upload directory
