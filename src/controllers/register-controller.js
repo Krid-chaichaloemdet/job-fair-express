@@ -65,6 +65,11 @@ exports.register = async (req, res, next) => {
 exports.checkPhoneNumber = async (req, res, next) =>{
   try {
     const { phoneNumber} = req.body
+    console.log("phoneNumber",phoneNumber)
+
+    if(!phoneNumber){
+      return res.status(400).json({ message : "Please enter the phone number you submitted during the registration."})
+    }
     const isMatch = await prisma.user.findFirst({
       where:{
         phoneNumber
@@ -80,9 +85,9 @@ exports.checkPhoneNumber = async (req, res, next) =>{
         userId : isMatch.userId
       }
     })
-    // if(isTestExist){
-    //   return res.status(400).json({ message : "This phone number has already been used to participate in this quiz."})
-    // }
+    if(isTestExist){
+      return res.status(400).json({ message : "This phone number has already been used to participate in this quiz."})
+    }
     res.status(200).json({ message : "valid phone number"})
   } catch (error) {
     console.log(error)
@@ -252,3 +257,35 @@ exports.getMe = async (req, res, next) => {
     console.log(error);
   }
 };
+
+exports.createSurvey = async (req, res, next) =>{
+  try {
+    
+    console.log(" serevey", req.body)
+
+    const { phoneNumber, survey1, survey2} = req.body
+
+
+    const findTargetUserId = await prisma.user.findFirst({
+      where: {
+        phoneNumber
+      }
+    })
+
+  const response =  await prisma.user.update({
+      where:{
+        userId: +findTargetUserId.userId
+      },
+      data:{
+        survey1,
+        survey2
+      }
+    })
+
+
+    console.log("after crate ", response)
+    res.status(200).json({ message : "created vurvey"})
+  } catch (error) {
+    console.log(error)
+  }
+}

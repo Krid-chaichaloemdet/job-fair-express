@@ -32,6 +32,8 @@ model User {
   interestingRate     String?
   likedRate           String?
   createdAt           String?
+  survey1             String? @db.VarChar(55)
+  survey2             String? @db.VarChar(55)
 }
 
 model Differ {
