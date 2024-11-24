@@ -85,9 +85,9 @@ exports.checkPhoneNumber = async (req, res, next) =>{
         userId : isMatch.userId
       }
     })
-    if(isTestExist){
-      return res.status(400).json({ message : "This phone number has already been used to participate in this quiz."})
-    }
+    // if(isTestExist){
+    //   return res.status(400).json({ message : "This phone number has already been used to participate in this quiz."})
+    // }
     res.status(200).json({ message : "valid phone number"})
   } catch (error) {
     console.log(error)
@@ -144,7 +144,7 @@ exports.createTestRecord = async (req, res, next) => {
     }
 
     const allTestResult = [];
-    for (let i = 1; i <= 8; i++) {
+    for (let i = 1; i <= 10; i++) {
       const test = req.body[`test${i}`];
       allTestResult.push(test);
     }
@@ -285,6 +285,47 @@ exports.createSurvey = async (req, res, next) =>{
 
     console.log("after crate ", response)
     res.status(200).json({ message : "created vurvey"})
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+exports.readAllCandidateUser = async (req, res, next) =>{
+  try {
+
+    const response = await prisma.user.findMany()
+
+    res.status(200).json(response)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+exports.readSingleCandidateTestData = async (req, res, next) =>{
+  try {
+
+    const response = await prisma.differ.findFirst({
+      where:{
+        userId : +req.query.userId
+      }
+    })
+
+    console.log("readSingleCandidateTestData",response)
+    res.status(200).json(response)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+exports.readSingleCandidateUser = async (req, res, next) =>{
+  try {
+    const response = await prisma.user.findFirst({
+      where:{
+        userId : +req.query.userId
+      }
+    })
+    console.log(response)
+    res.status(200).json(response)
   } catch (error) {
     console.log(error)
   }

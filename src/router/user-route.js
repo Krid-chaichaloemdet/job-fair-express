@@ -22,5 +22,9 @@ router.post('/getMe', getMeController.getMe)
 router.post('/checkPhoneNumber', checkPhoneNumberController.checkPhoneNumber)
 router.post('/createSurvey', checkPhoneNumberController.createSurvey)
 
+router.get('/readAllCandidateData', checkPhoneNumberController.readAllCandidateUser)
+router.get('/readSingleCandidateTestData', checkPhoneNumberController.readSingleCandidateTestData)
+
+router.get('/readSingleCandidateUser', checkPhoneNumberController.readSingleCandidateUser)
 
 module.exports = router
